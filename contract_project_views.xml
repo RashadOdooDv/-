@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_project_form_inherit_contracting" model="ir.ui.view">
+        <field name="name">project.project.form.inherit.contracting</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button class="oe_stat_button" type="object" name="action_view_boq_items" icon="fa-list-alt"
+                        invisible="not is_contracting_project">
+                    <field name="boq_count" widget="statinfo" string="BOQ Items"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="action_view_unassigned_entries" icon="fa-exclamation-triangle"
+                        invisible="not is_contracting_project or unassigned_entries_count == 0">
+                    <field name="unassigned_entries_count" widget="statinfo" string="Unassigned Entries"/>
+                </button>
+            </xpath>
+            <xpath expr="//sheet" position="before">
+                <widget name="web_ribbon" title="Budget Exceeded" bg_color="text-bg-danger"
+                        invisible="budget_alert_level != 'exceeded'"/>
+                <widget name="web_ribbon" title="Warning: 85%+ of Budget" bg_color="text-bg-warning"
+                        invisible="budget_alert_level != 'warning'"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="is_contracting_project"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Profitability Dashboard" name="contracting_dashboard" invisible="not is_contracting_project">
+                    <group>
+                        <group string="Contract Value">
+                            <field name="contract_value"/>
+                            <field name="overall_completion_percent" widget="progressbar" string="Completion Percentage"/>
+                        </group>
+                        <group string="Financial Status">
+                            <field name="total_actual_cost"/>
+                            <field name="total_variance"/>
+                            <field name="profitability_percent" widget="percentage" string="Profitability Percentage"/>
+                            <field name="budget_alert_level" widget="badge"
+                                   decoration-success="budget_alert_level == 'normal'"
+                                   decoration-warning="budget_alert_level == 'warning'"
+                                   decoration-danger="budget_alert_level == 'exceeded'"/>
+                        </group>
+                    </group>
+                    <field name="boq_ids" context="{'default_project_id': id}">
+                        <list decoration-danger="budget_alert_level == 'exceeded'"
+                              decoration-warning="budget_alert_level == 'warning'">
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="planned_amount" sum="Total"/>
+                            <field name="completion_percent" widget="progressbar"/>
+                            <field name="actual_cost" sum="Total"/>
+                            <field name="budget_alert_level" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

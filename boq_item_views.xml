@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== Form View ==================== -->
+    <record id="view_boq_item_form" model="ir.ui.view">
+        <field name="name">boq.item.form</field>
+        <field name="model">boq.item</field>
+        <field name="arch" type="xml">
+            <form string="BOQ Item">
+                <sheet>
+                    <widget name="web_ribbon" title="Budget Exceeded" bg_color="text-bg-danger"
+                            invisible="budget_alert_level != 'exceeded'"/>
+                    <widget name="web_ribbon" title="Warning: Approaching Budget Limit" bg_color="text-bg-warning"
+                            invisible="budget_alert_level != 'warning'"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Item Description"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="parent_id" domain="[('project_id','=',project_id), ('is_section','=',True)]"/>
+                            <field name="code"/>
+                            <field name="is_section"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="uom_id" invisible="is_section"/>
+                            <field name="planned_quantity" invisible="is_section"/>
+                            <field name="unit_price" invisible="is_section"/>
+                            <field name="planned_amount" invisible="is_section"/>
+                        </group>
+                    </group>
+                    <group invisible="is_section">
+                        <group string="Actual Execution">
+                            <field name="executed_quantity"/>
+                            <field name="completion_percent" widget="progressbar"/>
+                        </group>
+                        <group string="Financial Status">
+                            <field name="actual_cost"/>
+                            <field name="cost_variance"/>
+                            <field name="cost_variance_percent" widget="percentage" string="Budget Consumption Percentage"/>
+                            <field name="budget_alert_level" widget="badge"
+                                   decoration-success="budget_alert_level == 'normal'"
+                                   decoration-warning="budget_alert_level == 'warning'"
+                                   decoration-danger="budget_alert_level == 'exceeded'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sub Items" invisible="not is_section">
+                            <field name="child_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="uom_id"/>
+                                    <field name="planned_quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="planned_amount" sum="Total"/>
+                                    <field name="completion_percent" widget="progressbar" optional="show"/>
+                                    <field name="actual_cost" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Related Journal Entries" invisible="is_section">
+                            <field name="move_line_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="move_id"/>
+                                    <field name="account_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="debit" sum="Debit"/>
+                                    <field name="credit" sum="Credit"/>
+                                    <field name="parent_state" string="Status"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== List View (هرمي) ==================== -->
+    <record id="view_boq_item_list" model="ir.ui.view">
+        <field name="name">boq.item.list</field>
+        <field name="model">boq.item</field>
+        <field name="arch" type="xml">
+            <list string="BOQ Items" default_order="sequence, code"
+                  decoration-bf="is_section" decoration-danger="budget_alert_level == 'exceeded'"
+                  decoration-warning="budget_alert_level == 'warning'">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="project_id" optional="hide"/>
+                <field name="uom_id" optional="show"/>
+                <field name="planned_quantity" optional="show"/>
+                <field name="unit_price" optional="show"/>
+                <field name="planned_amount" sum="Planned Total"/>
+                <field name="completion_percent" widget="progressbar"/>
+                <field name="actual_cost" sum="Actual Total"/>
+                <field name="cost_variance" sum="Total Variance"/>
+                <field name="budget_alert_level" widget="badge" optional="show"
+                       decoration-success="budget_alert_level == 'normal'"
+                       decoration-warning="budget_alert_level == 'warning'"
+                       decoration-danger="budget_alert_level == 'exceeded'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== Search View ==================== -->
+    <record id="view_boq_item_search" model="ir.ui.view">
+        <field name="name">boq.item.search</field>
+        <field name="model">boq.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="project_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== Action ==================== -->
+    <record id="action_boq_item" model="ir.actions.act_window">
+        <field name="name">BOQ Items</field>
+        <field name="res_model">boq.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_boq_item_search"/>
+        <field name="context">{'search_default_group_project': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smile">Create the first BOQ item for your project.</p>
+        </field>
+    </record>
+
+</odoo>

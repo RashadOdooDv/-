@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================== Form View ==================== -->
+    <record id="view_overhead_allocation_form" model="ir.ui.view">
+        <field name="name">overhead.allocation.form</field>
+        <field name="model">overhead.allocation</field>
+        <field name="arch" type="xml">
+            <form string="Overhead Allocation">
+                <header>
+                    <button name="action_compute_lines" type="object" string="Compute Allocation"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_compute_lines" type="object" string="Recompute"
+                            invisible="state != 'computed'"/>
+                    <button name="action_post_allocation" type="object" string="Post Allocation"
+                            class="btn-primary" invisible="state != 'computed'"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset"
+                            invisible="state != 'computed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_move"
+                                icon="fa-book" invisible="not move_id">
+                            <span>Reallocation Entry</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="scope" widget="radio"/>
+                            <field name="project_id" invisible="scope != 'project'"
+                                   required="scope == 'project'"/>
+                            <field name="allocation_basis"/>
+                        </group>
+                        <group>
+                            <field name="source_move_line_id" readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_to_allocate"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Allocation Details">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="project_id"/>
+                                    <field name="boq_item_id"/>
+                                    <field name="weight"/>
+                                    <field name="weight_percent" widget="percentage"/>
+                                    <field name="allocated_amount" sum="Total"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== List View ==================== -->
+    <record id="view_overhead_allocation_list" model="ir.ui.view">
+        <field name="name">overhead.allocation.list</field>
+        <field name="model">overhead.allocation</field>
+        <field name="arch" type="xml">
+            <list string="Overhead Allocations" decoration-muted="state == 'draft'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="scope"/>
+                <field name="project_id"/>
+                <field name="allocation_basis"/>
+                <field name="amount_to_allocate" sum="Total"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state == 'computed'"
+                       decoration-muted="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ==================== Search View ==================== -->
+    <record id="view_overhead_allocation_search" model="ir.ui.view">
+        <field name="name">overhead.allocation.search</field>
+        <field name="model">overhead.allocation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="project_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ==================== Actions ==================== -->
+    <record id="action_overhead_allocation" model="ir.actions.act_window">
+        <field name="name">Overhead Allocation</field>
+        <field name="res_model">overhead.allocation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_overhead_allocation_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smile">
+                Create a new allocation process to distribute overhead expenses to BOQ items.
+            </p>
+        </field>
+    </record>
+
+</odoo>

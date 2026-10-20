@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_boq_line_analysis_pivot" model="ir.ui.view">
+        <field name="name">boq.line.analysis.pivot</field>
+        <field name="model">boq.line.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Profitability Analysis" sample="1">
+                <field name="project_id" type="row"/>
+                <field name="boq_item_id" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_boq_line_analysis_graph" model="ir.ui.view">
+        <field name="name">boq.line.analysis.graph</field>
+        <field name="model">boq.line.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Profitability Analysis" type="bar" stacked="1" sample="1">
+                <field name="project_id" type="row"/>
+                <field name="amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_boq_line_analysis_list" model="ir.ui.view">
+        <field name="name">boq.line.analysis.list</field>
+        <field name="model">boq.line.analysis</field>
+        <field name="arch" type="xml">
+            <list string="Project Cost Analysis" default_order="date desc" create="0" edit="0"
+                  decoration-muted="state != 'posted'">
+                <field name="date"/>
+                <field name="project_id"/>
+                <field name="boq_item_id"/>
+                <field name="account_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="move_id"/>
+                <field name="move_type" optional="hide"/>
+                <field name="amount" sum="Total"/>
+                <field name="is_general_expense" optional="show"/>
+                <field name="state" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boq_line_analysis_search" model="ir.ui.view">
+        <field name="name">boq.line.analysis.search</field>
+        <field name="model">boq.line.analysis</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <field name="boq_item_id"/>
+                <field name="partner_id"/>
+                <field name="account_id"/>
+                <filter name="posted" domain="[('state','=','posted')]"/>
+                <filter name="general_expense" domain="[('is_general_expense','=',True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_boq_line_analysis" model="ir.actions.act_window">
+        <field name="name">Project Profitability Analysis</field>
+        <field name="res_model">boq.line.analysis</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_boq_line_analysis_search"/>
+        <field name="context">{'search_default_posted': 1, 'search_default_this_year': 1}</field>
+    </record>
+
+</odoo>

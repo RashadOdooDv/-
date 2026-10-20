@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_overhead_allocation" model="ir.sequence">
+        <field name="name">Overhead Allocation</field>
+        <field name="code">overhead.allocation</field>
+        <field name="prefix">OH/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>
+
+    <record id="seq_contract_progress_billing" model="ir.sequence">
+        <field name="name">Contract Progress Billing (IPC)</field>
+        <field name="code">contract.progress.billing</field>
+        <field name="prefix">IPC/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_contract_variation_order" model="ir.sequence">
+        <field name="name">Contract Variation Order (VO)</field>
+        <field name="code">contract.variation.order</field>
+        <field name="prefix">VO/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_contract_retention_release" model="ir.sequence">
+        <field name="name">Contract Retention Release</field>
+        <field name="code">contract.retention.release</field>
+        <field name="prefix">RET/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>

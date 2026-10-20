@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_contracting_root" name="Contracting Management" sequence="10"
+              groups="group_contracting_user"/>
+
+    <menuitem id="menu_contracting_operations" name="Operations"
+              parent="menu_contracting_root" sequence="10"/>
+
+    <menuitem id="menu_contracting_boq" name="BOQ Items"
+              parent="menu_contracting_operations" action="action_boq_item" sequence="20"/>
+
+    <menuitem id="menu_contracting_overhead" name="Overhead Allocation"
+              parent="menu_contracting_operations" action="action_overhead_allocation" sequence="30"/>
+
+    <menuitem id="menu_contracting_reports" name="Reports"
+              parent="menu_contracting_root" sequence="40"/>
+
+    <menuitem id="menu_contracting_profitability" name="Profitability Analysis"
+              parent="menu_contracting_reports" action="action_boq_line_analysis" sequence="10"/>
+
+</odoo>
